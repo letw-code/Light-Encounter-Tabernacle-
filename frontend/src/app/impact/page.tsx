@@ -1,83 +1,41 @@
 'use client'
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import PremiumButton from '@/components/ui/PremiumButton'
-import SectionWrapper from '@/components/shared/SectionWrapper'
-import { Globe, Heart, Users, ExternalLink } from 'lucide-react'
-import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid'
-import { cmsApi, CMSPageContent } from '@/lib/api'
 
-const DEFAULT_CONTENT: CMSPageContent = {
-    hero: { title: "Making Jesus<br /><span class=\"text-[#f5bb00]\">Known</span>", subtitle: "Extending the love of Christ beyond the four walls of the church through service, missions, and community transformation.", bg_image: "https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=2670", label: "Kingdom Impact" },
-    stats: [
-        { label: "Lives Touched", value: "10,000+", icon: "Users" },
-        { label: "Communities Served", value: "15", icon: "Globe" },
-        { label: "Missions", value: "50+", icon: "ExternalLink" },
-        { label: "Volunteers", value: "500+", icon: "Heart" },
-    ],
-    grid: {
-        outreach: { title: "Community Outreach", description: "Providing food, clothing, and essential supplies to families in need within our local community.", image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800", icon: "Heart" },
-        missions: { title: "Global Missions", description: "Partnering with churches and organizations worldwide to spread the Gospel.", image: "https://images.unsplash.com/photo-1526976668912-1a811878dd37?w=800", icon: "Globe" },
-        youth: { title: "Youth Empowerment", description: "Mentoring the next generation through education, skill acquisition, and leadership training.", image: "https://images.unsplash.com/photo-1529390003875-5fd77b6580f5?w=800", icon: "Users" },
-        medical: { title: "Medical Missions", description: "Providing free medical checkups and basic healthcare support to underserved areas.", image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800", icon: "Heart" }
-    },
-    partner: {
-        title: "Partner With Us",
-        content: "Your generosity fuels these initiatives. When you give, you are not just donating; you are feeding the hungry, healing the sick, and equipping the next generation. Join us in making a tangible difference.",
-        image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=800",
-        button_text: "Give to Missions",
-        button_link: "/giving"
-    }
-}
+import React, { useState, useEffect } from 'react'
+import { cmsApi, Block } from '@/lib/api'
+import PageRenderer from '@/components/cms/PageRenderer'
+import { DEFAULT_IMPACT_BLOCKS } from '@/lib/cmsDefaults'
+import { Loader2 } from 'lucide-react'
 
 export default function ImpactPage() {
-    const [content, setContent] = useState<CMSPageContent>(DEFAULT_CONTENT)
+    const [blocks, setBlocks] = useState<Block[]>([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const fetchContent = async () => {
             try {
                 const data = await cmsApi.getPage('impact')
-                if (data && data.content) {
-                    setContent(prev => ({
-                        ...prev,
-                        ...data.content,
-                        hero: { ...prev.hero, ...(data.content.hero || {}) },
-                        stats: data.content.stats || prev.stats,
-                        grid: { ...prev.grid, ...(data.content.grid || {}) },
-                        partner: { ...prev.partner, ...(data.content.partner || {}) }
-                    }))
+                if (data && data.content && data.content.blocks && data.content.blocks.length > 0) {
+                    setBlocks(data.content.blocks)
+                } else {
+                    console.log("Using default impact blocks")
+                    setBlocks(DEFAULT_IMPACT_BLOCKS)
                 }
-            } catch {
-                console.log("Using default impact content")
+            } catch (e) {
+                console.log("Failed to fetch impact content, using defaults", e)
+                setBlocks(DEFAULT_IMPACT_BLOCKS)
+            } finally {
+                setLoading(false)
             }
         }
         fetchContent()
     }, [])
 
-    const getImageUrl = (img?: string) => {
-        if (!img) return ''
-        if (img.startsWith('/') || img.startsWith('http')) return img
-        return cmsApi.getImageUrl(img)
-    }
-
-    const getIcon = (name: string) => {
-        switch (name) {
-            case 'Globe': return <Globe className="h-4 w-4 p-2 text-neutral-500" />
-            case 'Heart': return <Heart className="h-4 w-4 p-2 text-neutral-500" />
-            case 'Users': return <Users className="h-4 w-4 p-2 text-neutral-500" />
-            case 'ExternalLink': return <ExternalLink className="h-4 w-4 p-2 text-neutral-500" />
-            default: return <Heart className="h-4 w-4 p-2 text-neutral-500" />
-        }
-    }
-
-    const getStatIcon = (name: string) => {
-        switch (name) {
-            case 'Globe': return Globe
-            case 'Heart': return Heart
-            case 'Users': return Users
-            case 'ExternalLink': return ExternalLink
-            default: return Heart
-        }
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-white dark:bg-black">
+                <Loader2 className="w-12 h-12 animate-spin text-[#140152]" />
+            </div>
+        )
     }
 
     return (
@@ -107,7 +65,7 @@ export default function ImpactPage() {
 
             {/* Impact Stats */}
             <SectionWrapper>
-                
+
 
                 <BentoGrid className="max-w-6xl mx-auto">
                     {content.grid && ['outreach', 'missions', 'youth', 'medical'].map((key) => {
