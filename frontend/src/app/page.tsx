@@ -15,7 +15,7 @@ import { sermonApi, eventApi, cmsApi, Sermon, Event, CMSPageContent } from '@/li
 
 const DEFAULT_CONTENT: CMSPageContent = {
   hero: {
-    title: "Light Encounter <br /> Tabernacle",
+    title: "Light Encounter Tabernacle",
     subtitle: "Engage. Empower. Uplift. Experience the divine presence in a sanctuary of faith and love.",
     bg_image: "/9.png"
   },

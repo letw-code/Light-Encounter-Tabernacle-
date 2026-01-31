@@ -107,18 +107,7 @@ export default function ImpactPage() {
 
             {/* Impact Stats */}
             <SectionWrapper>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto mb-20 text-center">
-                    {content.stats?.map((stat: { label?: string, value?: string, icon?: string }, i: number) => {
-                        const Icon = getStatIcon(stat.icon || 'Heart')
-                        return (
-                            <div key={i} className="p-6">
-                                <Icon className="w-8 h-8 mx-auto text-[#f5bb00] mb-4" />
-                                <div className="text-4xl md:text-5xl font-black text-[#140152] dark:text-white mb-2">{stat.value}</div>
-                                <div className="text-gray-500 font-bold uppercase tracking-wider text-sm">{stat.label}</div>
-                            </div>
-                        )
-                    })}
-                </div>
+                
 
                 <BentoGrid className="max-w-6xl mx-auto">
                     {content.grid && ['outreach', 'missions', 'youth', 'medical'].map((key) => {

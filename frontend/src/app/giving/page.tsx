@@ -4,19 +4,20 @@ import { toast } from 'sonner'
 import { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import PremiumButton from '@/components/ui/PremiumButton'
 import { Heart, Building, Users, BookOpen, CreditCard, Landmark, Bitcoin, CheckCircle2, ChevronRight, Copy, ChevronDown } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import dynamic from 'next/dynamic'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-const PaystackButton = dynamic(
-  () => import('react-paystack').then((mod) => mod.PaystackButton),
+const paypalButton = dynamic(
+  () => import('react-paypal').then((mod) => mod.paypalButton),
   { ssr: false }
 )
 
 export default function GivingPage() {
-  const [activeMethod, setActiveMethod] = useState<'card' | 'bank' | 'crypto'>('card')
+  const [activeMethod, setActiveMethod] = useState<'card' | 'bank' | 'paypal'>('card')
   const [amount, setAmount] = useState('5000')
   const [email, setEmail] = useState('')
   const [copied, setCopied] = useState(false)
@@ -24,12 +25,12 @@ export default function GivingPage() {
 
   // Debug key presence (masked)
   useEffect(() => {
-    const key = process.env.NEXT_PUBLIC_PAYSTACK_KEY;
-    console.log('Paystack Key Loaded:', key ? `${key.substring(0, 8)}...` : 'MISSING');
+    const key = process.env.NEXT_PUBLIC_paypal_KEY;
+    console.log('paypal Key Loaded:', key ? `${key.substring(0, 8)}...` : 'MISSING');
   }, []);
 
   // Use the environment variable, fallback to empty string (component should handle error or we check before render)
-  const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_KEY || ''
+  const publicKey = process.env.NEXT_PUBLIC_paypal_KEY || ''
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -41,7 +42,7 @@ export default function GivingPage() {
   const paymentMethods = [
     { id: 'card', name: 'Card', icon: CreditCard },
     { id: 'bank', name: 'Transfer', icon: Landmark },
-    { id: 'crypto', name: 'Crypto', icon: Bitcoin },
+    { id: 'paypal', name: 'paypal', icon: Bitcoin },
   ]
 
   const funds = [
@@ -60,7 +61,7 @@ export default function GivingPage() {
 
   const componentProps = {
     email,
-    amount: isValidAmount ? parseInt(amount) * 100 : 0, // Paystack expects amount in kobos/cents
+    amount: isValidAmount ? parseInt(amount) * 100 : 0, // paypal expects amount in kobos/cents
     currency: 'NGN',
     metadata: {
       name: 'Light Encounter Tabernacle',
@@ -227,14 +228,14 @@ export default function GivingPage() {
                       {/* Action Button */}
                       <div className="pt-2">
                         {!isValid ? (
-                          <Button
+                          <PremiumButton
                             disabled
                             className="w-full h-14 text-base shadow-none bg-gray-100 text-gray-400 font-bold rounded-xl"
                           >
                             {!isValidAmount ? 'Enter Valid Amount' : 'Enter Email to Give'}
-                          </Button>
+                          </PremiumButton>
                         ) : (
-                          <PaystackButton
+                          <paypalButton
                             className="w-full h-14 text-base shadow-xl shadow-[#f5bb00]/20 bg-[#f5bb00] text-[#140152] font-bold rounded-xl hover:bg-[#ffc820] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
                             {...componentProps}
                             amount={parseInt(amount) * 100}
@@ -261,15 +262,15 @@ export default function GivingPage() {
                         <div className="space-y-3">
                           <div className="flex justify-between items-center text-sm">
                             <span className="text-gray-500">Bank</span>
-                            <span className="font-bold text-[#140152]">GTBank</span>
+                            <span className="font-bold text-[#140152]">Providus Bank</span>
                           </div>
                           <div className="flex justify-between items-center text-sm">
                             <span className="text-gray-500">Account</span>
-                            <span className="font-bold text-[#140152]">Light Encounter Tabernacle</span>
+                            <span className="font-bold text-[#140152]">Light Encounter Tabernacle Wrd</span>
                           </div>
                           <div className="p-3 bg-white rounded-xl border border-gray-200 flex justify-between items-center">
-                            <span className="font-mono font-bold text-lg text-[#140152] tracking-widest">0123456789</span>
-                            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleCopy('0123456789')}>
+                            <span className="font-mono font-bold text-lg text-[#140152] tracking-widest">1308078805</span>
+                            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleCopy('1308078805')}>
                               {copied ? <CheckCircle2 className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                             </Button>
                           </div>
@@ -292,12 +293,46 @@ export default function GivingPage() {
                           </div>
                         </div>
                       </div>
+
+                      <div className="bg-[#140152] p-6 rounded-2xl border border-white/10 space-y-4 relative overflow-hidden text-white">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#f5bb00]/10 rounded-full -translate-y-16 translate-x-16" />
+                        <h4 className="font-extrabold text-[#f5bb00] text-xs uppercase tracking-widest relative z-10">Domiciliary (EUR)</h4>
+                        <div className="space-y-3 relative z-10">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-300">Bank</span>
+                            <span className="font-bold">Zenith Bank</span>
+                          </div>
+                          <div className="p-3 bg-white/10 rounded-xl border border-white/10 flex justify-between items-center">
+                            <span className="font-mono font-bold text-lg tracking-widest">COMING SOON</span>
+                            <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-white/10 text-white" disabled>
+                              <Copy className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-[#140152] p-6 rounded-2xl border border-white/10 space-y-4 relative overflow-hidden text-white">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#f5bb00]/10 rounded-full -translate-y-16 translate-x-16" />
+                        <h4 className="font-extrabold text-[#f5bb00] text-xs uppercase tracking-widest relative z-10">Domiciliary (GBP)</h4>
+                        <div className="space-y-3 relative z-10">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-gray-300">Bank</span>
+                            <span className="font-bold">Zenith Bank</span>
+                          </div>
+                          <div className="p-3 bg-white/10 rounded-xl border border-white/10 flex justify-between items-center">
+                            <span className="font-mono font-bold text-lg tracking-widest">COMING SOON</span>
+                            <Button size="icon" variant="ghost" className="h-8 w-8 hover:bg-white/10 text-white" disabled>
+                              <Copy className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
                     </motion.div>
                   )}
 
-                  {activeMethod === 'crypto' && (
+                  {activeMethod === 'paypal' && (
                     <motion.div
-                      key="crypto"
+                      key="paypal"
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -20 }}
@@ -311,12 +346,12 @@ export default function GivingPage() {
                         {[
                           { label: 'Bitcoin (BTC)', addr: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh' },
                           { label: 'USDT (TRC20)', addr: 'T9yD14Nj9j7xAB4dbGeiX9h8bAyWC3RZkz' }
-                        ].map((crypto, i) => (
+                        ].map((paypal, i) => (
                           <div key={i} className="text-left space-y-2">
-                            <span className="text-xs font-bold uppercase text-gray-400 ml-1">{crypto.label}</span>
+                            <span className="text-xs font-bold uppercase text-gray-400 ml-1">{paypal.label}</span>
                             <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                              <code className="text-xs text-[#140152] font-mono flex-1 break-all">{crypto.addr}</code>
-                              <Button size="icon" variant="ghost" className="h-8 w-8 flex-shrink-0" onClick={() => handleCopy(crypto.addr)}>
+                              <code className="text-xs text-[#140152] font-mono flex-1 break-all">{paypal.addr}</code>
+                              <Button size="icon" variant="ghost" className="h-8 w-8 flex-shrink-0" onClick={() => handleCopy(paypal.addr)}>
                                 <Copy className="w-4 h-4" />
                               </Button>
                             </div>

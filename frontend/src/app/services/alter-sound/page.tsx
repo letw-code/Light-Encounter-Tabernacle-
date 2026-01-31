@@ -181,14 +181,14 @@ export default function SoundAltarPage() {
                             <p className="mb-8 font-bold opacity-90">Listen to anointed worship and prophetic sound that carries heaven's presence</p>
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <Link href="/services/alter-sound/library" className="flex-1">
-                                    <Button className="w-full bg-[#140152] text-white hover:bg-[#140152]/90 py-6 rounded-xl font-bold shadow-lg">
+                                    <PremiumButton variant="secondary" className="w-full bg-[#140152] text-white hover:bg-[#140152]/90 py-6 rounded-xl font-bold shadow-lg">
                                         Browse Audio Library
-                                    </Button>
+                                    </PremiumButton>
                                 </Link>
                                 <Link href="/prayer" className="flex-1">
-                                    <Button className="w-full bg-white text-[#140152] hover:bg-white/90 py-6 rounded-xl font-bold shadow-lg border-2 border-[#140152]">
+                                    <PremiumButton variant="light" className="w-full bg-white text-[#140152] hover:bg-white/90 py-6 rounded-xl font-bold shadow-lg border-2 border-[#140152]">
                                         Prayer Ministry
-                                    </Button>
+                                    </PremiumButton>
                                 </Link>
                             </div>
                         </div>

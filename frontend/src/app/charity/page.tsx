@@ -20,18 +20,7 @@ export default function CharityPage() {
                     <p className="text-xl text-neutral-100 mb-8">
                         "Our charity initiatives are dedicated to expressing the love of Christ through compassion, relief, and practical support for vulnerable individuals and communities."
                     </p>
-                    <div className="flex gap-4 justify-center">
-                        <Link href="/charity/contribute">
-                            <Button size="lg" className="bg-white text-black hover:bg-neutral-200">
-                                Contribute
-                            </Button>
-                        </Link>
-                        <Link href="/contact">
-                            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white/10">
-                                See Our Impact
-                            </Button>
-                        </Link>
-                    </div>
+                    
                 </div>
             </section>
 

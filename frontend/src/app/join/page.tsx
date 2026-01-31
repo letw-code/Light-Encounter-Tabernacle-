@@ -4,6 +4,7 @@ import Hero from '@/components/shared/Hero'
 import SectionWrapper from '@/components/shared/SectionWrapper'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import PremiumButton from '@/components/ui/PremiumButton'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -203,23 +204,14 @@ export default function JoinPage() {
                   </div>
                 )}
 
-                <Button
+                <PremiumButton
                   type="submit"
                   disabled={loading}
-                  variant="primary"
-                  className="w-full h-14 rounded-full py-0.5 px-1 pl-5 shadow-[0_0_20px_rgba(245,187,0,0.5)] hover:shadow-[0_0_30px_rgba(245,187,0,0.6)] transition-shadow duration-300"
+                  loading={loading}
+                  className="w-full h-14"
                 >
-                  <div className="flex items-center justify-between w-full px-4">
-                    <p>{loading ? 'Joining...' : 'Join Now'}</p>
-                    <div className="p-2 bg-white fill-current rounded-full transition-transform group-hover:translate-x-1 text-black">
-                      {loading ? (
-                        <Loader2 className="w-4 h-4 text-[#140152] animate-spin" />
-                      ) : (
-                        <ArrowRight className="w-4 h-4 text-[#140152] -rotate-45" />
-                      )}
-                    </div>
-                  </div>
-                </Button>
+                  Join Now
+                </PremiumButton>
                 <div className="mt-4 text-center relative z-10">
                   <p className="text-gray-500 text-sm">
                     Already a member? <Link href="/auth/login" className="text-[#140152] hover:underline font-semibold">Click here to login</Link>
