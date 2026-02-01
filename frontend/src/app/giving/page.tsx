@@ -11,8 +11,8 @@ import { cn } from '@/lib/utils'
 import dynamic from 'next/dynamic'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-const paypalButton = dynamic(
-  () => import('react-paypal').then((mod) => mod.paypalButton),
+const PaystackButton = dynamic(
+  () => import('react-paystack').then((mod) => mod.PaystackButton),
   { ssr: false }
 )
 
@@ -26,7 +26,7 @@ export default function GivingPage() {
   // Debug key presence (masked)
   useEffect(() => {
     const key = process.env.NEXT_PUBLIC_paypal_KEY;
-    console.log('paypal Key Loaded:', key ? `${key.substring(0, 8)}...` : 'MISSING');
+    console.log('Paystack Key Loaded:', key ? `${key.substring(0, 8)}...` : 'MISSING');
   }, []);
 
   // Use the environment variable, fallback to empty string (component should handle error or we check before render)
@@ -235,7 +235,7 @@ export default function GivingPage() {
                             {!isValidAmount ? 'Enter Valid Amount' : 'Enter Email to Give'}
                           </PremiumButton>
                         ) : (
-                          <paypalButton
+                          <PaystackButton
                             className="w-full h-14 text-base shadow-xl shadow-[#f5bb00]/20 bg-[#f5bb00] text-[#140152] font-bold rounded-xl hover:bg-[#ffc820] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
                             {...componentProps}
                             amount={parseInt(amount) * 100}
