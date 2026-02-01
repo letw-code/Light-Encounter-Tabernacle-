@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface PremiumButtonProps {
@@ -13,26 +13,37 @@ interface PremiumButtonProps {
     target?: string
     disabled?: boolean
     type?: 'button' | 'submit' | 'reset'
+    loading?: boolean
+    variant?: "primary" | "secondary" | "outline" | "ghost" | "light" | "link"
 }
 
-export default function PremiumButton({ href, children, onClick, className, target, disabled, type }: PremiumButtonProps) {
+export default function PremiumButton({ href, children, onClick, className, target, disabled, type, loading, variant = "primary" }: PremiumButtonProps) {
     const content = (
         <>
-            <p>{children}</p>
-            <div className="p-2 bg-white fill-current rounded-full transition-transform group-hover:translate-x-1">
-                <ArrowRight className="w-4 h-4 text-[#140152] -rotate-45" />
+            <p>{loading ? 'Please wait...' : children}</p>
+            <div className={cn(
+                "p-2 bg-white fill-current rounded-full transition-transform group-hover:translate-x-1",
+                loading && "translate-x-0",
+                variant === "outline" || variant === "ghost" ? "bg-transparent text-current" : ""
+            )}>
+                {loading ? (
+                    <Loader2 className="w-4 h-4 text-inherit animate-spin" />
+                ) : (
+                    <ArrowRight className="w-4 h-4 text-inherit -rotate-45" />
+                )}
             </div>
         </>
     )
 
     const buttonClass = cn(
         "rounded-full py-0.5 px-1 pl-5 shadow-[0_0_20px_rgba(245,187,0,0.5)] hover:shadow-[0_0_30px_rgba(245,187,0,0.6)] transition-shadow duration-300",
+        variant === "outline" && "shadow-none hover:shadow-lg border-2",
         className
     )
 
-    if (href) {
+    if (href && !loading) {
         return (
-            <Button variant="primary" asChild className={buttonClass} disabled={disabled}>
+            <Button variant={variant} asChild className={buttonClass} disabled={disabled}>
                 <Link href={href} target={target}>
                     {content}
                 </Link>
@@ -41,13 +52,7 @@ export default function PremiumButton({ href, children, onClick, className, targ
     }
 
     return (
-        <Button variant="primary" className={buttonClass} onClick={onClick} disabled={disabled} type={type}>
-            {/* We wrap in a span to ensure the flex layout behaves like the Link version if needed,
-            though Button itself is flex. But we need to match the structure manually since we don't have the Link wrapper.
-            Actually, Button puts children directly inside. So we just render content.
-            However, the 'group-hover' for the arrow translation relies on the parent having 'group'.
-            Button variants don't usually have 'group'. We might need to add 'group' to the button class.
-        */}
+        <Button variant={variant} className={buttonClass} onClick={onClick} disabled={disabled || loading} type={type}>
             {content}
         </Button>
     )

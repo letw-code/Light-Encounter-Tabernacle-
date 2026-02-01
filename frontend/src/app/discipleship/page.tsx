@@ -26,15 +26,11 @@ export default function DiscipleshipPage() {
                     className="relative z-20 text-center text-white px-4 max-w-4xl"
                 >
                     <span className="text-[#f5bb00] font-bold tracking-[0.2em] uppercase text-sm md:text-base mb-4 block">Walk with Christ</span>
-                    <h1 className="text-5xl md:text-8xl font-black mb-6 leading-tight">Follow.<br />Learn.<br />Lead.</h1>
+                    <h1 className="text-5xl md:text-8xl font-black mb-6 leading-tight">Follow. Learn. Lead.</h1>
                     <p className="text-lg md:text-2xl text-gray-200 mt-4 max-w-2xl mx-auto font-light">
                         The journey of a disciple is a lifelong pursuit of knowing Jesus and making Him known.
                     </p>
-                    <div className="mt-8">
-                        <Button className="bg-[#f5bb00] text-[#140152] hover:bg-white hover:text-[#140152] font-bold rounded-full px-8 py-6 text-lg">
-                            Start Your Window
-                        </Button>
-                    </div>
+                    
                 </motion.div>
             </div>
 

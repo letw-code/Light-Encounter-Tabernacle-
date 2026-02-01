@@ -114,14 +114,9 @@ export default function ContactPage() {
                 />
               </div>
 
-              <Button type="submit" variant="primary" className="w-full h-14 rounded-full py-0.5 px-1 pl-5 shadow-[0_0_20px_rgba(245,187,0,0.5)] hover:shadow-[0_0_30px_rgba(245,187,0,0.6)] transition-shadow duration-300">
-                <div className="flex items-center justify-between w-full px-4">
-                  <p>Send Message</p>
-                  <div className="p-2 bg-white fill-current rounded-full transition-transform group-hover:translate-x-1 text-black">
-                    <ArrowRight className="w-4 h-4 text-[#140152] -rotate-45" />
-                  </div>
-                </div>
-              </Button>
+              <PremiumButton type="submit" className="w-full h-14">
+                Send Message
+              </PremiumButton>
             </form>
           </div>
 
@@ -129,7 +124,6 @@ export default function ContactPage() {
           <div className="space-y-12">
             <div className="space-y-4 text-center lg:text-left">
               <span className="text-[#f5bb00] font-bold uppercase tracking-[0.2em] text-sm">Global Reach</span>
-              <h2 className="text-4xl md:text-5xl font-black text-[#140152]">Reach Us Directly</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -162,9 +156,9 @@ export default function ContactPage() {
                 <p className="text-white/80 font-medium leading-relaxed">
                   Do you have a specific prayer request? Our pastoral team is ready to pray with you.
                 </p>
-                <Button variant="light" size="sm" asChild className="rounded-full px-6">
-                  <Link href="/prayer-request">Submit Request</Link>
-                </Button>
+                <PremiumButton variant="light" href="/prayer-request" className="h-9 px-4 text-sm">
+                  Submit Request
+                </PremiumButton>
               </div>
             </div>
           </div>
@@ -181,7 +175,9 @@ export default function ContactPage() {
                 <MapPin className="text-white w-8 h-8" />
               </div>
               <p className="text-[#140152] font-black text-xl">Find Us in Abuja</p>
-              <Button variant="outline" className="rounded-full border-[#140152]/10 hover:bg-[#140152] hover:text-white">Open in Google Maps</Button>
+              <PremiumButton variant="outline" className="border-[#140152]/10 hover:bg-[#140152] hover:text-white">
+                Open in Google Maps
+              </PremiumButton>
             </div>
           </div>
         </div>
