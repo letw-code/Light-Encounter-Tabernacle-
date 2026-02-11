@@ -11,6 +11,8 @@ import os
 
 from config import settings
 from database import init_db
+from utils.logger import app_logger, db_logger
+from middleware import setup_logging_middleware
 
 # Import all models to register them with SQLAlchemy Base BEFORE init_db
 import models  # noqa: F401
@@ -20,12 +22,15 @@ import models  # noqa: F401
 async def lifespan(app: FastAPI):
     """Application lifecycle events."""
     # Startup: Initialize database tables
-    print("🚀 Starting Light Encounter Tabernacle API...")
+    app_logger.info("🚀 Starting Light Encounter Tabernacle API...")
+    db_logger.info("Initializing database...")
     await init_db()
-    print("✅ Database initialized")
+    app_logger.info("✅ Database initialized")
+    db_logger.info("Database tables created/verified successfully")
     yield
     # Shutdown
-    print("👋 Shutting down...")
+    app_logger.info("👋 Shutting down application...")
+    db_logger.info("Closing database connections...")
 
 
 # Create FastAPI application
@@ -53,7 +58,8 @@ allowed_origins = [
 # Remove duplicates and empty strings
 allowed_origins = list(set(filter(None, allowed_origins)))
 
-print(f"🌐 CORS enabled for origins: {allowed_origins}")
+app_logger.info(f"🌐 CORS enabled for {len(allowed_origins)} origins")
+app_logger.debug(f"Allowed origins: {allowed_origins}")
 
 app.add_middleware(
     CORSMiddleware,
@@ -63,6 +69,10 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],  # Allow frontend to read all response headers
 )
+
+# Setup logging middleware to track all requests
+setup_logging_middleware(app)
+app_logger.info("Logging middleware configured")
 
 
 @app.get("/")

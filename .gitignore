@@ -28,3 +28,8 @@ env/
 *.md
 *.db
 *.txt
+
+# Logs
+backend/logs/
+*.log
+*.log.*

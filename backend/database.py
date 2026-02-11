@@ -1,6 +1,6 @@
 """
 Database configuration and session management.
-Uses SQLAlchemy 2.0 async engine with asyncpg for PostgreSQL.
+Uses SQLAlchemy 2.0 async engine with asyncpg for PostgreSQL or aiomysql for MySQL.
 """
 
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
@@ -8,8 +8,19 @@ from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.pool import NullPool
 from config import settings
 
+# Import logger - use print as fallback to avoid circular imports during initial setup
+try:
+    from utils.logger import db_logger
+    logger = db_logger
+except ImportError:
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.addHandler(logging.StreamHandler())
+    logger.setLevel(logging.INFO)
 
-print(f"[database.py] Using DB URL scheme: {settings.DATABASE_URL.split('://')[0]}", flush=True)
+
+db_scheme = settings.DATABASE_URL.split('://')[0]
+logger.info(f"Using database URL scheme: {db_scheme}")
 
 # Determine if using Supabase (needs special PgBouncer settings)
 is_supabase = "supabase.com" in settings.DATABASE_URL or "pooler.supabase.com" in settings.DATABASE_URL
@@ -26,9 +37,10 @@ if is_supabase:
             "jit": "off"  # Disable JIT for better pgbouncer compatibility
         },
     }
-    print(f"[database.py] Supabase detected - disabling prepared statement cache", flush=True)
+    logger.info("Supabase detected - disabling prepared statement cache for PgBouncer compatibility")
 else:
     async_connect_args = {}
+    logger.info("Using standard database connection settings")
 
 # Async engine for FastAPI
 # NullPool ensures we don't do any pooling on SQLAlchemy side (let PgBouncer handle it)
@@ -41,7 +53,9 @@ engine = create_async_engine(
     connect_args=async_connect_args,
 )
 
-print(f"[database.py] Async engine created with NullPool", flush=True)
+logger.info("Async database engine created with NullPool")
+if settings.DEBUG:
+    logger.debug("SQL query echo enabled (DEBUG mode)")
 
 # Async session factory
 AsyncSessionLocal = async_sessionmaker(
@@ -62,26 +76,27 @@ async def get_db():
     Dependency that provides a database session.
     Automatically closes the session after the request.
     """
-    print("[get_db] Creating async session...", flush=True)
+    logger.debug("Creating async database session...")
     try:
         async with AsyncSessionLocal() as session:
-            print("[get_db] Session created successfully", flush=True)
+            logger.debug("Database session created successfully")
             try:
                 yield session
             finally:
                 await session.close()
+                logger.debug("Database session closed")
     except Exception as e:
-        print(f"[get_db] ERROR creating session: {type(e).__name__}: {e}", flush=True)
+        logger.error(f"ERROR creating database session: {type(e).__name__}: {e}", exc_info=True)
         raise
 
 
 async def init_db():
     """Create all database tables."""
-    print("[init_db] Initializing database tables...", flush=True)
+    logger.info("Initializing database tables...")
     try:
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-        print("[init_db] Database tables created successfully", flush=True)
+        logger.info("Database tables created/verified successfully")
     except Exception as e:
-        print(f"[init_db] ERROR: {type(e).__name__}: {e}", flush=True)
+        logger.error(f"ERROR initializing database: {type(e).__name__}: {e}", exc_info=True)
         raise

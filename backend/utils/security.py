@@ -3,32 +3,34 @@ Security utilities for password hashing and JWT token management.
 """
 
 import secrets
-import bcrypt
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from jose import jwt, JWTError
+from passlib.context import CryptContext
 
 from config import settings
 
 
 # ============= Password Hashing =============
 
+# Use pbkdf2_sha256 instead of bcrypt (works without C compilation)
+pwd_context = CryptContext(
+    schemes=["pbkdf2_sha256"],
+    deprecated="auto",
+    pbkdf2_sha256__default_rounds=30000
+)
+
+
 def hash_password(password: str) -> str:
-    """Hash a password using bcrypt."""
-    # Truncate to 72 bytes (bcrypt limit) and encode
-    password_bytes = password.encode('utf-8')[:72]
-    salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(password_bytes, salt)
-    return hashed.decode('utf-8')
+    """Hash a password using pbkdf2_sha256."""
+    return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a password against its hash."""
     try:
-        password_bytes = plain_password.encode('utf-8')[:72]
-        hashed_bytes = hashed_password.encode('utf-8')
-        return bcrypt.checkpw(password_bytes, hashed_bytes)
+        return pwd_context.verify(plain_password, hashed_password)
     except Exception:
         return False
 
